@@ -32,8 +32,55 @@ export default function ProductoForm({
     setFormulario({ ...formulario, [name]: value })
   }
 
+  const validarFormulario = () => {
+    if (formulario.nombre.trim().length < 3) {
+      return 'El nombre del producto debe tener al menos 3 caracteres'
+    }
+
+    if (formulario.categoria.trim().length < 3) {
+      return 'La categoría debe tener al menos 3 caracteres'
+    }
+
+    if (formulario.codigo.trim().length < 3) {
+      return 'El código del producto debe tener al menos 3 caracteres'
+    }
+
+    if (Number(formulario.precioCompra) <= 0) {
+      return 'El precio de compra debe ser mayor a 0'
+    }
+
+    if (Number(formulario.precioVenta) <= 0) {
+      return 'El precio de venta debe ser mayor a 0'
+    }
+
+    if (Number(formulario.precioVenta) < Number(formulario.precioCompra)) {
+      return 'El precio de venta no puede ser menor al precio de compra'
+    }
+
+    if (Number(formulario.stock) < 0) {
+      return 'El stock no puede ser negativo'
+    }
+
+    if (Number(formulario.stockMinimo) < 0) {
+      return 'El stock mínimo no puede ser negativo'
+    }
+
+    if (!formulario.fechaVencimiento) {
+      return 'Debe ingresar la fecha de vencimiento'
+    }
+
+    return null
+  }
+
   const manejarEnvio = async (e) => {
     e.preventDefault()
+
+    const errorValidacion = validarFormulario()
+
+    if (errorValidacion) {
+      setMensaje(errorValidacion)
+      return
+    }
 
     try {
       setCargando(true)
