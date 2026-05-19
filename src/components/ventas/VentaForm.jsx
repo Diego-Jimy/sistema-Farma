@@ -1,9 +1,11 @@
+import { obtenerClientes } from '@services/clientesService'
 import { useEffect, useState } from 'react'
 import { obtenerProductos } from '@services/productosService'
 import { registrarVenta } from '@services/ventasService'
 
 export default function VentaForm({ onVentaRegistrada }) {
   const [cliente, setCliente] = useState('')
+  const [clientes, setClientes] = useState([])
   const [productos, setProductos] = useState([])
   const [productoSeleccionado, setProductoSeleccionado] = useState('')
   const [cantidad, setCantidad] = useState(1)
@@ -13,6 +15,7 @@ export default function VentaForm({ onVentaRegistrada }) {
 
   useEffect(() => {
     cargarProductos()
+    cargarClientes()
   }, [])
 
   const cargarProductos = async () => {
@@ -20,8 +23,15 @@ export default function VentaForm({ onVentaRegistrada }) {
     setProductos(datos)
   }
 
+  const cargarClientes = async () => {
+    const datos = await obtenerClientes()
+    setClientes(datos)
+  }
+
   const agregarProducto = () => {
-    const producto = productos.find((item) => item.id === productoSeleccionado)
+    const producto = productos.find(
+      (item) => item.id === productoSeleccionado
+    )
 
     if (!producto) {
       setMensaje('Seleccione un producto')
@@ -38,14 +48,17 @@ export default function VentaForm({ onVentaRegistrada }) {
       return
     }
 
-    const productoExistente = detalleVenta.find((item) => item.id === producto.id)
+    const productoExistente = detalleVenta.find(
+      (item) => item.id === producto.id
+    )
 
     if (productoExistente) {
       setMensaje('El producto ya fue agregado')
       return
     }
 
-    const subtotal = Number(producto.precioVenta) * Number(cantidad)
+    const subtotal =
+      Number(producto.precioVenta) * Number(cantidad)
 
     setDetalleVenta([
       ...detalleVenta,
@@ -66,16 +79,21 @@ export default function VentaForm({ onVentaRegistrada }) {
   }
 
   const eliminarProducto = (id) => {
-    setDetalleVenta(detalleVenta.filter((item) => item.id !== id))
+    setDetalleVenta(
+      detalleVenta.filter((item) => item.id !== id)
+    )
   }
 
-  const total = detalleVenta.reduce((suma, item) => suma + item.subtotal, 0)
+  const total = detalleVenta.reduce(
+    (suma, item) => suma + item.subtotal,
+    0
+  )
 
   const manejarVenta = async (e) => {
     e.preventDefault()
 
     if (!cliente.trim()) {
-      setMensaje('Ingrese el nombre del cliente')
+      setMensaje('Seleccione un cliente')
       return
     }
 
@@ -123,18 +141,33 @@ export default function VentaForm({ onVentaRegistrada }) {
         </div>
       )}
 
-      <form onSubmit={manejarVenta} className="space-y-5">
+      <form
+        onSubmit={manejarVenta}
+        className="space-y-5"
+      >
         <div>
           <label className="block text-sm font-medium text-slate-700 mb-2">
             Cliente
           </label>
-          <input
-            type="text"
+
+          <select
             value={cliente}
             onChange={(e) => setCliente(e.target.value)}
             className="w-full border border-slate-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Nombre del cliente"
-          />
+          >
+            <option value="">
+              Seleccione un cliente
+            </option>
+
+            {clientes.map((item) => (
+              <option
+                key={item.id}
+                value={item.nombre}
+              >
+                {item.nombre} - DNI: {item.dni}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
@@ -142,15 +175,26 @@ export default function VentaForm({ onVentaRegistrada }) {
             <label className="block text-sm font-medium text-slate-700 mb-2">
               Producto
             </label>
+
             <select
               value={productoSeleccionado}
-              onChange={(e) => setProductoSeleccionado(e.target.value)}
+              onChange={(e) =>
+                setProductoSeleccionado(e.target.value)
+              }
               className="w-full border border-slate-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <option value="">Seleccione un producto</option>
+              <option value="">
+                Seleccione un producto
+              </option>
+
               {productos.map((producto) => (
-                <option key={producto.id} value={producto.id}>
-                  {producto.nombre} - Stock: {producto.stock} - S/ {producto.precioVenta}
+                <option
+                  key={producto.id}
+                  value={producto.id}
+                >
+                  {producto.nombre} - Stock:{' '}
+                  {producto.stock} - S/{' '}
+                  {producto.precioVenta}
                 </option>
               ))}
             </select>
@@ -160,10 +204,13 @@ export default function VentaForm({ onVentaRegistrada }) {
             <label className="block text-sm font-medium text-slate-700 mb-2">
               Cantidad
             </label>
+
             <input
               type="number"
               value={cantidad}
-              onChange={(e) => setCantidad(e.target.value)}
+              onChange={(e) =>
+                setCantidad(e.target.value)
+              }
               min="1"
               className="w-full border border-slate-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
             />
@@ -182,32 +229,62 @@ export default function VentaForm({ onVentaRegistrada }) {
           <table className="w-full text-sm">
             <thead className="bg-slate-100 text-slate-700">
               <tr>
-                <th className="px-4 py-3 text-left">Producto</th>
-                <th className="px-4 py-3 text-left">Cantidad</th>
-                <th className="px-4 py-3 text-left">Precio</th>
-                <th className="px-4 py-3 text-left">Subtotal</th>
-                <th className="px-4 py-3 text-left">Acción</th>
+                <th className="px-4 py-3 text-left">
+                  Producto
+                </th>
+                <th className="px-4 py-3 text-left">
+                  Cantidad
+                </th>
+                <th className="px-4 py-3 text-left">
+                  Precio
+                </th>
+                <th className="px-4 py-3 text-left">
+                  Subtotal
+                </th>
+                <th className="px-4 py-3 text-left">
+                  Acción
+                </th>
               </tr>
             </thead>
 
             <tbody>
               {detalleVenta.length === 0 ? (
                 <tr>
-                  <td colSpan="5" className="px-4 py-5 text-center text-slate-500">
+                  <td
+                    colSpan="5"
+                    className="px-4 py-5 text-center text-slate-500"
+                  >
                     No hay productos agregados.
                   </td>
                 </tr>
               ) : (
                 detalleVenta.map((item) => (
-                  <tr key={item.id} className="border-t border-slate-100">
-                    <td className="px-4 py-3">{item.nombre}</td>
-                    <td className="px-4 py-3">{item.cantidad}</td>
-                    <td className="px-4 py-3">S/ {item.precioVenta.toFixed(2)}</td>
-                    <td className="px-4 py-3">S/ {item.subtotal.toFixed(2)}</td>
+                  <tr
+                    key={item.id}
+                    className="border-t border-slate-100"
+                  >
+                    <td className="px-4 py-3">
+                      {item.nombre}
+                    </td>
+
+                    <td className="px-4 py-3">
+                      {item.cantidad}
+                    </td>
+
+                    <td className="px-4 py-3">
+                      S/ {item.precioVenta.toFixed(2)}
+                    </td>
+
+                    <td className="px-4 py-3">
+                      S/ {item.subtotal.toFixed(2)}
+                    </td>
+
                     <td className="px-4 py-3">
                       <button
                         type="button"
-                        onClick={() => eliminarProducto(item.id)}
+                        onClick={() =>
+                          eliminarProducto(item.id)
+                        }
                         className="bg-red-100 text-red-700 px-3 py-1 rounded-lg hover:bg-red-200"
                       >
                         Quitar
@@ -235,7 +312,9 @@ export default function VentaForm({ onVentaRegistrada }) {
           disabled={cargando}
           className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition disabled:opacity-60"
         >
-          {cargando ? 'Registrando venta...' : 'Registrar venta'}
+          {cargando
+            ? 'Registrando venta...'
+            : 'Registrar venta'}
         </button>
       </form>
     </div>
