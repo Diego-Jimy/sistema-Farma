@@ -6,15 +6,37 @@ import {
   FaBoxes,
   FaCashRegister,
   FaUsers,
+  FaChartPie,
   FaSignOutAlt,
   FaTimes,
 } from 'react-icons/fa'
 
 const menu = [
-  { nombre: 'Dashboard', ruta: '/dashboard', icono: FaChartLine },
-  { nombre: 'Inventario', ruta: '/inventario', icono: FaBoxes },
-  { nombre: 'Ventas', ruta: '/ventas', icono: FaCashRegister },
-  { nombre: 'Clientes', ruta: '/clientes', icono: FaUsers },
+  {
+    nombre: 'Dashboard',
+    ruta: '/dashboard',
+    icono: FaChartLine,
+  },
+  {
+    nombre: 'Inventario',
+    ruta: '/inventario',
+    icono: FaBoxes,
+  },
+  {
+    nombre: 'Ventas',
+    ruta: '/ventas',
+    icono: FaCashRegister,
+  },
+  {
+    nombre: 'Clientes',
+    ruta: '/clientes',
+    icono: FaUsers,
+  },
+  {
+    nombre: 'Reportes',
+    ruta: '/reportes',
+    icono: FaChartPie,
+  },
 ]
 
 export default function Sidebar({
