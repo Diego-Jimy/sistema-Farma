@@ -1,16 +1,109 @@
-# React + Vite
+# Sistema Farma
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Sistema web de gestión de inventario y ventas para una botica/farmacia, desarrollado con React, Vite y Firebase.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+# Descripción
 
-## React Compiler
+Sistema Farma permite administrar:
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Inventario de productos
+- Ventas
+- Clientes
+- Reportes
+- Exportación PDF y Excel
+- Dashboard administrativo
+- Control de stock
+- Alertas de stock bajo
+- Autenticación de usuarios
 
-## Expanding the ESLint configuration
+El proyecto fue desarrollado como solución para mejorar la gestión operativa de una botica mediante un sistema web moderno y responsive.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+
+# Tecnologías utilizadas
+
+## Frontend
+
+- React
+- Vite
+- React Router DOM
+- Tailwind CSS
+- Recharts
+- React Icons
+
+## Backend / Servicios
+
+- Firebase Authentication
+- Cloud Firestore
+- Firebase Hosting
+
+## Reportes
+
+- jsPDF
+- jsPDF-AutoTable
+- XLSX
+
+---
+
+# Funcionalidades principales
+
+## Gestión de Inventario
+
+- Registro de productos
+- Edición y eliminación
+- Control de stock
+- Stock mínimo
+- Fecha de vencimiento
+- Validaciones avanzadas
+
+## Gestión de Ventas
+
+- Registro de ventas
+- Cálculo automático
+- Actualización de stock
+- Historial de ventas
+- Filtros por fecha
+
+## Gestión de Clientes
+
+- Registro de clientes
+- Edición y eliminación
+- Búsqueda de clientes
+
+## Dashboard Administrativo
+
+- Métricas generales
+- Productos registrados
+- Clientes registrados
+- Ingresos totales
+- Gráficos estadísticos
+- Productos con stock bajo
+
+## Reportes
+
+- Reportes de ventas
+- Filtros por fechas
+- Exportación a Excel
+- Exportación a PDF
+
+## Seguridad
+
+- Inicio de sesión
+- Protección de rutas
+- Reglas de seguridad Firestore
+- Cierre de sesión seguro
+
+---
+
+# Credenciales de acceso
+
+## Administrador
+
+```txt
+Correo:
+admin@sistemafarma.com
+
+Contraseña:
+Admin123456
