@@ -29,11 +29,13 @@ export default function Login() {
 
       if (modoRegistro) {
         if (contraseña.length < 6) {
-          return setError('La contraseña debe tener mínimo 6 caracteres')
+          setError('La contraseña debe tener mínimo 6 caracteres')
+          return
         }
 
         if (contraseña !== confirmarContraseña) {
-          return setError('Las contraseñas no coinciden')
+          setError('Las contraseñas no coinciden')
+          return
         }
 
         await registrarUsuario(correo, contraseña)
@@ -60,7 +62,7 @@ export default function Login() {
   return (
     <div className="min-h-screen bg-slate-100 flex items-center justify-center px-4">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8">
-        <div className="text-center mb-8">
+        <div className="text-center mb-6">
           <h1 className="text-3xl font-bold text-slate-800">
             Sistema Farma
           </h1>
@@ -71,6 +73,26 @@ export default function Login() {
               : 'Iniciar sesión en el sistema'}
           </p>
         </div>
+
+        {!modoRegistro && (
+          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6">
+            <h3 className="text-sm font-bold text-blue-700 mb-2">
+              Usuario de prueba
+            </h3>
+
+            <p className="text-sm text-slate-700">
+              <span className="font-semibold">Correo:</span>
+              <br />
+              admin@sistemafarma.com
+            </p>
+
+            <p className="text-sm text-slate-700 mt-2">
+              <span className="font-semibold">Contraseña:</span>
+              <br />
+              Admin123456
+            </p>
+          </div>
+        )}
 
         {error && (
           <div className="bg-red-100 text-red-600 px-4 py-3 rounded-lg mb-5">
@@ -148,6 +170,7 @@ export default function Login() {
             onClick={() => {
               setModoRegistro(!modoRegistro)
               setError('')
+              setConfirmarContraseña('')
             }}
             className="text-blue-600 hover:text-blue-700 font-medium"
           >
