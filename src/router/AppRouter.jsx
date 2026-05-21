@@ -12,8 +12,6 @@ import ProtectedRoute from '@router/ProtectedRoute'
 export default function AppRouter() {
   return (
     <Routes>
-      <Route path="*" element={<Navigate to="/login" replace />} />
-
       <Route path="/login" element={<Login />} />
 
       <Route element={<ProtectedRoute />}>
@@ -27,6 +25,11 @@ export default function AppRouter() {
 
         <Route path="/reportes" element={<Reportes />} />
       </Route>
+
+      <Route
+        path="*"
+        element={<Navigate to="/login" replace />}
+      />
     </Routes>
   )
 }
