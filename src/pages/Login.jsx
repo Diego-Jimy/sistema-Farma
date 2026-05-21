@@ -1,40 +1,76 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+
 import { useAuth } from '@context/AuthContext'
 
 export default function Login() {
   const navigate = useNavigate()
 
-  const { iniciarSesion } = useAuth()
+  const {
+    iniciarSesion,
+    registrarUsuario,
+  } = useAuth()
+
+  const [modoRegistro, setModoRegistro] = useState(false)
 
   const [correo, setCorreo] = useState('')
   const [contraseña, setContraseña] = useState('')
-  const [error, setError] = useState('')
+  const [confirmarContraseña, setConfirmarContraseña] = useState('')
 
-  const manejarLogin = async (e) => {
+  const [error, setError] = useState('')
+  const [cargando, setCargando] = useState(false)
+
+  const manejarEnvio = async (e) => {
     e.preventDefault()
 
     try {
       setError('')
+      setCargando(true)
 
-      await iniciarSesion(correo, contraseña)
+      if (modoRegistro) {
+        if (contraseña.length < 6) {
+          return setError('La contraseña debe tener mínimo 6 caracteres')
+        }
+
+        if (contraseña !== confirmarContraseña) {
+          return setError('Las contraseñas no coinciden')
+        }
+
+        await registrarUsuario(correo, contraseña)
+      } else {
+        await iniciarSesion(correo, contraseña)
+      }
 
       navigate('/dashboard')
     } catch (error) {
-      setError('Correo o contraseña incorrectos')
+      console.error(error)
+
+      if (error.code === 'auth/email-already-in-use') {
+        setError('El correo ya está registrado')
+      } else if (error.code === 'auth/invalid-credential') {
+        setError('Correo o contraseña incorrectos')
+      } else {
+        setError('Ocurrió un error en la autenticación')
+      }
+    } finally {
+      setCargando(false)
     }
   }
 
   return (
     <div className="min-h-screen bg-slate-100 flex items-center justify-center px-4">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
-        <h1 className="text-3xl font-bold text-center text-slate-800">
-          Sistema Farma
-        </h1>
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-slate-800">
+            Sistema Farma
+          </h1>
 
-        <p className="text-center text-slate-500 mt-2 mb-8">
-          Iniciar sesión en el sistema
-        </p>
+          <p className="text-slate-500 mt-2">
+            {modoRegistro
+              ? 'Crear nuevo usuario'
+              : 'Iniciar sesión en el sistema'}
+          </p>
+        </div>
 
         {error && (
           <div className="bg-red-100 text-red-600 px-4 py-3 rounded-lg mb-5">
@@ -43,8 +79,8 @@ export default function Login() {
         )}
 
         <form
+          onSubmit={manejarEnvio}
           className="space-y-5"
-          onSubmit={manejarLogin}
         >
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-2">
@@ -55,8 +91,8 @@ export default function Login() {
               type="email"
               value={correo}
               onChange={(e) => setCorreo(e.target.value)}
-              className="w-full border border-slate-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="usuario@correo.com"
+              className="w-full border border-slate-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
           </div>
@@ -70,19 +106,56 @@ export default function Login() {
               type="password"
               value={contraseña}
               onChange={(e) => setContraseña(e.target.value)}
-              className="w-full border border-slate-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Ingrese su contraseña"
+              className="w-full border border-slate-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
           </div>
 
+          {modoRegistro && (
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-2">
+                Confirmar contraseña
+              </label>
+
+              <input
+                type="password"
+                value={confirmarContraseña}
+                onChange={(e) => setConfirmarContraseña(e.target.value)}
+                placeholder="Repita la contraseña"
+                className="w-full border border-slate-300 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+                required
+              />
+            </div>
+          )}
+
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
+            disabled={cargando}
+            className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition disabled:opacity-60"
           >
-            Ingresar
+            {cargando
+              ? 'Procesando...'
+              : modoRegistro
+                ? 'Crear usuario'
+                : 'Ingresar'}
           </button>
         </form>
+
+        <div className="mt-6 text-center">
+          <button
+            type="button"
+            onClick={() => {
+              setModoRegistro(!modoRegistro)
+              setError('')
+            }}
+            className="text-blue-600 hover:text-blue-700 font-medium"
+          >
+            {modoRegistro
+              ? '¿Ya tienes cuenta? Inicia sesión'
+              : '¿No tienes cuenta? Crear usuario'}
+          </button>
+        </div>
       </div>
     </div>
   )
